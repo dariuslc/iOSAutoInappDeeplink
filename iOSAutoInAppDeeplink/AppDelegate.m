@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "Localytics.h"
 
 @interface AppDelegate ()
 
@@ -16,6 +17,8 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [Localytics setLoggingEnabled:YES];
+    [Localytics autoIntegrate:@"7a4bbd050054efe6854cf7a-f0683936-18bd-11e5-1ecc-00020191b0b4" launchOptions:launchOptions];
     // Override point for customization after application launch.
     return YES;
 }
@@ -40,6 +43,23 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
+    if ([[url host] isEqualToString:@"deeplink"]) {
+        if ([[url path] isEqualToString:@"/product"]) {
+            UIStoryboard *storyboard = self.window.rootViewController.storyboard;
+            UIViewController *productView = [storyboard instantiateViewControllerWithIdentifier:@"product"];
+            self.window.rootViewController = productView;
+            [self.window makeKeyAndVisible];
+        }else{
+            return NO;
+        }
+    }else{
+        return NO;
+    }
+    
+    return YES;
 }
 
 @end
